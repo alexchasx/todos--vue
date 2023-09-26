@@ -1,13 +1,10 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import AppTodoItem from '@/components/AppTodoItem.vue';
+import { Item } from '@/types/Item';
 
 interface State {
-  items: {
-    id: number;
-    text: string;
-    status: boolean;
-  }[];
+  items: Item[];
 }
 
 export default defineComponent({
@@ -24,11 +21,26 @@ export default defineComponent({
       ],
     };
   },
+
+  methods: {
+    toggleTodo(id: number) {
+      const targetItem = this.items.find((item: Item) => item.id === id);
+
+      if (targetItem) {
+        targetItem.status = !targetItem.status;
+      }
+    },
+  },
 });
 </script>
 
 <template>
   <ul class="todo-list">
-    <AppTodoItem v-for="item in items" :key="item.id" :item="item" />
+    <AppTodoItem
+      v-for="item in items"
+      :key="item.id"
+      :item="item"
+      @toggle-todo="toggleTodo"
+    />
   </ul>
 </template>
