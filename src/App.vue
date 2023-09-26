@@ -6,9 +6,11 @@ import AppTodoList from '@/components/AppTodoList.vue';
 import AppAddTodo from '@/components/AppAddTodo.vue';
 import AppFooter from '@/components/AppFooter.vue';
 import { Item } from '@/types/Item';
+import { Filter } from '@/types/Filter';
 
 interface State {
   items: Item[];
+  activeFilter: Filter;
 }
 
 export default defineComponent({
@@ -27,15 +29,29 @@ export default defineComponent({
         { id: 2, text: 'Learn the basics of Typescript', status: false },
         { id: 3, text: 'Learn the basics of Nuxt', status: false },
       ],
+      activeFilter: 'All',
     };
   },
 
+  computed: {
+    filteredItems(): Item[] {
+      switch (this.activeFilter) {
+        case 'Active':
+          return this.items.filter((item) => !item.status);
+        case 'Done':
+          return this.items.filter((item) => item.status);
+        default:
+          return this.items;
+      }
+    },
+  },
+
   methods: {
-    addItem(item: Item) {
+    addItem(item: Item): void {
       this.items.push(item);
     },
 
-    toggleItem(id: number) {
+    toggleItem(id: number): void {
       const targetItem = this.items.find((item: Item) => item.id === id);
 
       if (targetItem) {
@@ -43,8 +59,12 @@ export default defineComponent({
       }
     },
 
-    removeItem(id: number) {
+    removeItem(id: number): void {
       this.items = this.items.filter((item: Item) => item.id !== id);
+    },
+
+    setFilter(filter: Filter): void {
+      this.activeFilter = filter;
     },
   },
 });
@@ -64,11 +84,11 @@ export default defineComponent({
       <div id="app">
         <AppHeader />
 
-        <AppFilters />
+        <AppFilters :active-filter="activeFilter" @set-filter="setFilter" />
 
         <main class="app-main">
           <AppTodoList
-            :items="items"
+            :items="filteredItems"
             @toggle-item="toggleItem"
             @remove-item="removeItem"
           />
