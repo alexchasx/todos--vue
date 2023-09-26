@@ -1,39 +1,32 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { PropType, defineComponent } from 'vue';
 import AppTodoItem from '@/components/AppTodoItem.vue';
 import { Item } from '@/types/Item';
-
-interface State {
-  items: Item[];
-}
 
 export default defineComponent({
   components: {
     AppTodoItem,
   },
 
-  data(): State {
-    return {
-      items: [
-        { id: 1, text: 'Learn the basics of Vue', status: true },
-        { id: 2, text: 'Learn the basics of Typescript', status: false },
-        { id: 3, text: 'Learn the basics of Nuxt', status: false },
-      ],
-    };
+  props: {
+    items: {
+      type: Array as PropType<Item[]>,
+    },
   },
 
   methods: {
     toggleItem(id: number) {
-      const targetItem = this.items.find((item: Item) => item.id === id);
-
-      if (targetItem) {
-        targetItem.status = !targetItem.status;
-      }
+      this.$emit('toggleItem', id);
     },
 
     removeItem(id: number) {
-      this.items = this.items.filter((item: Item) => item.id !== id);
+      this.$emit('removeItem', id);
     },
+  },
+
+  emits: {
+    toggleItem: (id: number) => Number.isInteger(id),
+    removeItem: (id: number) => Number.isInteger(id),
   },
 });
 </script>

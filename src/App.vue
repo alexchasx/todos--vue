@@ -5,6 +5,11 @@ import AppFilters from '@/components/AppFilters.vue';
 import AppTodoList from '@/components/AppTodoList.vue';
 import AppAddTodo from '@/components/AppAddTodo.vue';
 import AppFooter from '@/components/AppFooter.vue';
+import { Item } from '@/types/Item';
+
+interface State {
+  items: Item[];
+}
 
 export default defineComponent({
   components: {
@@ -13,6 +18,34 @@ export default defineComponent({
     AppTodoList,
     AppAddTodo,
     AppFooter,
+  },
+
+  data(): State {
+    return {
+      items: [
+        { id: 1, text: 'Learn the basics of Vue', status: true },
+        { id: 2, text: 'Learn the basics of Typescript', status: false },
+        { id: 3, text: 'Learn the basics of Nuxt', status: false },
+      ],
+    };
+  },
+
+  methods: {
+    addItem(item: Item) {
+      this.items.push(item);
+    },
+
+    toggleItem(id: number) {
+      const targetItem = this.items.find((item: Item) => item.id === id);
+
+      if (targetItem) {
+        targetItem.status = !targetItem.status;
+      }
+    },
+
+    removeItem(id: number) {
+      this.items = this.items.filter((item: Item) => item.id !== id);
+    },
   },
 });
 </script>
@@ -34,9 +67,13 @@ export default defineComponent({
         <AppFilters />
 
         <main class="app-main">
-          <AppTodoList />
+          <AppTodoList
+            :items="items"
+            @toggle-item="toggleItem"
+            @remove-item="removeItem"
+          />
 
-          <AppAddTodo />
+          <AppAddTodo @add-item="addItem" />
         </main>
 
         <AppFooter />
