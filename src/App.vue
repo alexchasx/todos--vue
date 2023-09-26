@@ -4,9 +4,10 @@ import AppHeader from '@/components/AppHeader.vue';
 import AppFilters from '@/components/AppFilters.vue';
 import AppTodoList from '@/components/AppTodoList.vue';
 import AppAddTodo from '@/components/AppAddTodo.vue';
-import AppFooter from '@/components/AppFooter.vue';
+import AppFooter from './components/AppFooter.vue';
 import { Item } from '@/types/Item';
 import { Filter } from '@/types/Filter';
+import { Stats } from '@/types/Stats';
 
 interface State {
   items: Item[];
@@ -37,12 +38,27 @@ export default defineComponent({
     filteredItems(): Item[] {
       switch (this.activeFilter) {
         case 'Active':
-          return this.items.filter((item) => !item.status);
+          return this.activeItems;
         case 'Done':
-          return this.items.filter((item) => item.status);
+          return this.doneItems;
         default:
           return this.items;
       }
+    },
+
+    stats(): Stats {
+      return {
+        active: this.activeItems.length,
+        done: this.doneItems.length,
+      };
+    },
+
+    activeItems(): Item[] {
+      return this.items.filter((item) => !item.status);
+    },
+
+    doneItems(): Item[] {
+      return this.items.filter((item) => item.status);
     },
   },
 
@@ -96,7 +112,7 @@ export default defineComponent({
           <AppAddTodo @add-item="addItem" />
         </main>
 
-        <AppFooter />
+        <AppFooter :stats="stats" />
       </div>
     </body>
   </html>
