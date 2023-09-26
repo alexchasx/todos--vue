@@ -11,13 +11,18 @@ export default defineComponent({
   },
 
   methods: {
-    toggleTodo() {
-      this.$emit('toggleTodo', this.item.id);
+    toggleItem() {
+      this.$emit('toggleItem', this.item.id);
+    },
+
+    removeItem() {
+      this.$emit('removeItem', this.item.id);
     },
   },
 
   emits: {
-    toggleTodo: (id: number) => Number.isInteger(id),
+    toggleItem: (id: number) => Number.isInteger(id),
+    removeItem: (id: number) => Number.isInteger(id),
   },
 });
 </script>
@@ -26,7 +31,7 @@ export default defineComponent({
   <li
     class="todo-item"
     :class="{ 'todo-item--done': item.status }"
-    @click="toggleTodo"
+    @click="toggleItem"
   >
     <div class="todo-item__status">
       <i class="bi bi-check2"></i>
@@ -34,7 +39,7 @@ export default defineComponent({
 
     <span class="todo-item__text">{{ item.text }}</span>
 
-    <button class="todo-item__remove-button">
+    <button class="todo-item__remove-button" @click.stop="removeItem">
       <i class="bi bi-trash3"></i>
     </button>
   </li>
